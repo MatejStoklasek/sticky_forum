@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Zadej platný e-mail.';
     }
     if ($password === '' || strlen($password) < 6) {
-        $errors[] = 'Heslo je povinné a musí mít alespoň 6 znaků.';
+        $errors[] = 'Heslo musí mít alespoň 6 znaků.';
     }
     if ($agree !== 1) {
         $errors[] = 'Musíš souhlasit s pravidly.';
@@ -86,17 +86,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="post" action="register.php">
             <div class="row">
                 <div class="field">
-                    <label for="name">Jméno (text)</label>
+                    <label for="name">Jméno</label>
                     <input type="text" id="name" name="name" value="<?php echo h($name); ?>" required>
                 </div>
                 <div class="field">
-                    <label for="email">E-mail (email)</label>
+                    <label for="email">E-mail</label>
                     <input type="email" id="email" name="email" value="<?php echo h($email); ?>" required>
                 </div>
                 <div class="field">
-                    <label for="password">Heslo (password)</label>
+                    <label for="password">Heslo</label>
                     <input type="password" id="password" name="password" required>
-                    <div class="hint">Heslo ukládáme bezpečně jako hash.</div>
                 </div>
             </div>
 
@@ -104,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="field">
                     <label>
                         <input type="checkbox" name="agree" value="1">
-                        Souhlasím s pravidly (checkbox)
+                        Souhlasím s pravidly
                     </label>
                 </div>
             </div>

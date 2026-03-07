@@ -1,4 +1,4 @@
-/* style.css - modern layout + sticky animations */
+/* style.css - modern layout + sticky animations + detective board */
 
 :root{
   --bg0: #0b1020;
@@ -28,6 +28,9 @@
   --shadow-md: 0 18px 50px rgba(2,6,23,.14);
 
   --ring: 0 0 0 4px rgba(37, 99, 235, .18);
+  
+  /* Detective strings */
+  --string-color: #d4552a;
 }
 
 *{ box-sizing: border-box; }
@@ -88,6 +91,10 @@ header{
   background: rgba(255,255,255,.10);
   border-color: rgba(255,255,255,.22);
 }
+.topbar a.is-active{
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.28);
+}
 
 .hero{
   margin-top: 16px;
@@ -113,14 +120,17 @@ header{
 }
 
 .grid{
-  display:grid;
-  grid-template-columns: 420px 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Pevné 50/50 */
   gap: 14px;
-  align-items: start;
-  margin-top: 14px;
+  align-items: start; /* Zarovná nahoru */
+  min-height: 600px;
 }
 @media (max-width: 980px){
-  .grid{ grid-template-columns: 1fr; }
+  .grid{ 
+    grid-template-columns: 1fr; 
+    min-height: auto;
+  }
 }
 
 .panel{
@@ -179,6 +189,11 @@ textarea{ min-height: 110px; resize: vertical; }
   background: linear-gradient(135deg, #334155, #0f172a);
   box-shadow: 0 14px 30px rgba(15,23,42,.16);
 }
+.btn.small{
+  font-size: 11px;
+  padding: 4px 8px;
+  font-weight: 500;
+}
 
 .hint{ font-size: 12px; color: var(--muted); margin-top:-2px; }
 
@@ -200,7 +215,7 @@ textarea{ min-height: 110px; resize: vertical; }
 }
 .msg-err ul{ margin:0; padding-left:18px; }
 
-/* Board */
+/* Detective Board - fixed size with scrolling */
 .board{
   position: relative;
   border-radius: calc(var(--radius) + 6px);
@@ -211,6 +226,60 @@ textarea{ min-height: 110px; resize: vertical; }
     var(--board);
   border: 1px solid rgba(0,0,0,.14);
   box-shadow: inset 0 0 0 6px rgba(0,0,0,.08), 0 18px 60px var(--board-shadow);
+  
+  /* Fixed height with scroll */
+  height: 600px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.board-navigation{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+}
+
+.nav-btn{
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255,255,255,.85);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  transition: all .15s ease;
+}
+.nav-btn:hover{
+  background: rgba(255,255,255,.95);
+  transform: translateY(-1px);
+}
+.nav-btn:disabled{
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* Scrollbar styling */
+.board::-webkit-scrollbar{
+  width: 8px;
+}
+.board::-webkit-scrollbar-track{
+  background: rgba(0,0,0,.1);
+  border-radius: 4px;
+}
+.board::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,.3);
+  border-radius: 4px;
+}
+.board::-webkit-scrollbar-thumb:hover{
+  background: rgba(0,0,0,.4);
 }
 
 .notes{
@@ -218,12 +287,45 @@ textarea{ min-height: 110px; resize: vertical; }
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 12px;
   align-items:start;
+  position: relative;
+}
+
+/* Thread connections (šňůrky) */
+.thread{
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+.thread::before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      var(--string-color) 0px,
+      var(--string-color) 4px,
+      transparent 4px,
+      transparent 8px
+    );
+  transform-origin: 0 0;
+  animation: threadPulse 2s ease-in-out infinite;
+}
+
+@keyframes threadPulse{
+  0%, 100% { opacity: .7; }
+  50% { opacity: .4; }
 }
 
 /* Sticky note base */
 .note {
   transition: transform 160ms ease, box-shadow 160ms ease;
   will-change: transform;
+  position: relative;
+  z-index: 2;
 }
 
 .note:hover {
@@ -232,6 +334,7 @@ textarea{ min-height: 110px; resize: vertical; }
     rotate(var(--rot, 0deg))
     scale(1.02);
   box-shadow: 0 14px 35px rgba(0,0,0,.22);
+  z-index: 5;
 }
 
 .note {
@@ -240,13 +343,12 @@ textarea{ min-height: 110px; resize: vertical; }
 }
 
 .note{
-  position: relative;
   padding: 11px 11px 10px;
   border-radius: 14px;
   border: 1px solid rgba(0,0,0,.16);
   min-height: 128px;
 
-  /* default “on-load stick” */
+  /* default "on-load stick" */
   opacity: 0;
   transform: translateY(-14px) rotate(calc(var(--rot) * 1deg)) scale(.98);
   box-shadow: 0 8px 18px rgba(0,0,0,.18);
@@ -281,6 +383,35 @@ textarea{ min-height: 110px; resize: vertical; }
   margin-left: 6px;
 }
 
+.user-tag{
+  background: rgba(37,99,235,.2);
+  color: #1e40af;
+  border-color: rgba(37,99,235,.3);
+}
+
+.reply-tag{
+  background: rgba(34,197,94,.2);
+  color: #166534;
+  border-color: rgba(34,197,94,.3);
+}
+
+/* Thread indicator */
+.note.has-thread::after{
+  content: '🧵';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 12px;
+  background: rgba(255,255,255,.9);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+
 /* Colors */
 .yellow{ background: linear-gradient(180deg, rgba(255,255,255,.35), transparent 50%), var(--note-yellow); }
 .pink{ background: linear-gradient(180deg, rgba(255,255,255,.35), transparent 50%), var(--note-pink); }
@@ -291,6 +422,36 @@ textarea{ min-height: 110px; resize: vertical; }
 .note.is-new{
   animation: stickNew .75s cubic-bezier(.18, .98, .22, 1) forwards;
   box-shadow: 0 14px 28px rgba(0,0,0,.22);
+}
+
+/* Reply form in note */
+.reply-form{
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0,0,0,.1);
+  display: none;
+}
+.reply-form.active{
+  display: block;
+  animation: slideDown .3s ease;
+}
+.reply-form textarea{
+  min-height: 60px;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+@keyframes slideDown{
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Note actions */
+.note-actions{
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  align-items: center;
 }
 
 /* Animations */
@@ -309,6 +470,7 @@ textarea{ min-height: 110px; resize: vertical; }
 @media (prefers-reduced-motion: reduce){
   .note{ animation: none; opacity: 1; transform: rotate(calc(var(--rot) * 1deg)); }
   .note.is-new{ animation: none; }
+  .thread::before{ animation: none; }
 }
 
 .footer{
@@ -406,7 +568,7 @@ textarea{ min-height: 110px; resize: vertical; }
 /* Animations */
 @keyframes stickIn{
   0%   { opacity: 0; transform: translate(var(--dx, 0px), calc(var(--dy, 0px) - 14px)) rotate(calc(var(--rot, 0) * 1deg)) scale(.98); }
-  70%  { opacity: 1; transform: translate(calc(var(--dx, 0px)), calc(var(--dy, 0px) + 2px)) rotate(calc(var(--rot, 0) * 1deg)) scale(1.01); }
+  70%  { opacity: 1; transform: translate(var(--dx, 0px)), calc(var(--dy, 0px) + 2px)) rotate(calc(var(--rot, 0) * 1deg)) scale(1.01); }
   100% { opacity: 1; transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(calc(var(--rot, 0) * 1deg)) scale(1); }
 }
 
@@ -424,4 +586,109 @@ textarea{ min-height: 110px; resize: vertical; }
 
 /* ... existing code ... */
 
+/* Ujistěte se, že tyto elementy sdílí stejné zarovnání */
+.topbar {
+  display: flex;
+  justify-content: space-between; /* Horizontální zarovnání */
+  align-items: center; /* Vertikální zarovnání */
+  gap: 12px;
+  flex-wrap: wrap; /* Zajistí, že se vejde na menší obrazovky */
+}
 
+.row {
+  display: flex;
+  align-items: center; /* Nastaví u všech prvků stejnou výšku */
+  gap: 12px; /* Mezera mezi prvky */
+  flex-wrap: wrap;
+}
+
+/* Pro pole typu hledat a téma */
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Zarovná obsah vlevo (nebo používejte "center" pro střed) */
+  gap: 6px;
+  min-width: 180px;
+  flex: 1;
+}
+
+/* Pro vstupní pole a tlačítka */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  height: 42px; /* Všechna pole nastavena na stejnou výšku */
+  padding: 10px 12px;
+  box-sizing: border-box; /* Zahrnutí paddingu do výšky a šířky */
+}
+
+label {
+  font-size: 14px;
+  line-height: 1.2; /* Konzistentní mezera mezi názvem pole a vstupním formulářem */
+}
+/* Oprava style.css pro zarovnání hledat + téma (a dalších částí) */
+
+/* Základní nastavení pro zarovnání */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responzivní mřížka */
+  gap: 14px; /* Mezera mezi sloupci */
+  align-items: center; /* Vertikální zarovnání */
+}
+
+/* Zarovnání řádků */
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center; /* Vertikální zarovnání (například pro hledat/téma) */
+  flex-wrap: wrap; /* Zajistí, že se vše vejde na menší obrazovky */
+}
+
+/* Zarovnání polí (formuláře) */
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Zarovná obsah vlevo */
+  flex: 1;
+  gap: 6px;
+  min-width: 180px; /* Minimální šířka pole */
+}
+
+/* Hledat + téma (specifická pravidla) */
+.search-topic-container {
+  display: flex;
+  align-items: center; /* Sjednotí zarovnání obou prvků */
+  gap: 16px; /* Mezera mezi hledat a téma */
+}
+
+.search-topic-container .field {
+  flex: 1; /* Obě pole stejné šířky */
+}
+
+.search-topic-container select,
+.search-topic-container input[type="text"] {
+  height: 42px; /* Zarovnání výšky vstupního pole i selectu */
+  padding: 8px 10px; /* Pro uživatelské pohodlí */
+  font-size: 14px; /* Konzistentní velikost textu */
+  box-sizing: border-box; /* Zahrnout padding do velikosti */
+}
+
+/* Btn zarovnání */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  color: #fff;
+  border: 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:hover {
+  filter: brightness(1.03);
+}

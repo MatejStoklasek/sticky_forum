@@ -88,11 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="post" action="login.php">
             <div class="row">
                 <div class="field">
-                    <label for="email">E-mail (email)</label>
+                    <label for="email">E-mail</label>
                     <input type="email" id="email" name="email" value="<?php echo h($email); ?>" required>
                 </div>
                 <div class="field">
-                    <label for="password">Heslo (password)</label>
+                    <label for="password">Heslo</label>
                     <input type="password" id="password" name="password" required>
                 </div>
             </div>
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="field">
                     <label>
                         <input type="checkbox" name="remember" value="1">
-                        Zůstat přihlášený (Remember me)
+                        Zůstat přihlášený
                     </label>
                 </div>
             </div>
