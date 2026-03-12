@@ -18,9 +18,9 @@ function db()
 
     $dsn = "mysql:host={$host};dbname={$name};charset={$charset}";
     $options = array(
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
     );
 
     $pdo = new PDO($dsn, $user, $pass, $options);
@@ -98,15 +98,15 @@ function remember_me_set($userId)
 
     $pdo = db();
     $stmt = $pdo->prepare(
-        "INSERT INTO auth_tokens (user_id, selector, token_hash, expires_at, created_at)
+            "INSERT INTO auth_tokens (user_id, selector, token_hash, expires_at, created_at)
          VALUES (:user_id, :selector, :token_hash, :expires_at, :created_at)"
     );
     $stmt->execute(array(
-        ':user_id' => (int)$userId,
-        ':selector' => $selector,
-        ':token_hash' => $tokenHash,
-        ':expires_at' => $expiresAt,
-        ':created_at' => date('Y-m-d H:i:s'),
+            ':user_id' => (int)$userId,
+            ':selector' => $selector,
+            ':token_hash' => $tokenHash,
+            ':expires_at' => $expiresAt,
+            ':created_at' => date('Y-m-d H:i:s'),
     ));
 
     $cookieValue = $selector . ':' . $token;
@@ -160,7 +160,7 @@ function current_user()
 
     $pdo = db();
     $stmt = $pdo->prepare(
-        "SELECT t.user_id, t.token_hash, t.expires_at, u.id, u.name, u.email
+            "SELECT t.user_id, t.token_hash, t.expires_at, u.id, u.name, u.email
          FROM auth_tokens t
          JOIN users u ON u.id = t.user_id
          WHERE t.selector = :selector
@@ -188,9 +188,9 @@ function current_user()
     }
 
     $_SESSION['user'] = array(
-        'id' => (int)$row['id'],
-        'name' => $row['name'],
-        'email' => $row['email'],
+            'id' => (int)$row['id'],
+            'name' => $row['name'],
+            'email' => $row['email'],
     );
 
     return $_SESSION['user'];
@@ -206,7 +206,7 @@ function trashNote(PDO $pdo, int $userId, int $noteId): void
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        ':id' => $noteId,
-        ':user_id' => $userId,
+            ':id' => $noteId,
+            ':user_id' => $userId,
     ]);
 }

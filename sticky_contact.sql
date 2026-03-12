@@ -80,3 +80,18 @@ CREATE TABLE IF NOT EXISTS message_trash
   CONSTRAINT fk_message_trash_message
     FOREIGN KEY (message_id) REFERENCES messages (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS message_backup
+(
+  user_id      INT UNSIGNED NOT NULL,
+  message_id   INT UNSIGNED NOT NULL,
+  backed_up_at DATETIME     NOT NULL,
+  PRIMARY KEY (user_id, message_id),
+  KEY idx_user_backed_up_at (user_id, backed_up_at),
+  CONSTRAINT fk_message_backup_user
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+  CONSTRAINT fk_message_backup_message
+    FOREIGN KEY (message_id) REFERENCES messages (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Pozn.: původní message_trash můžeš po migraci klidně dropnout.

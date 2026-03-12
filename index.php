@@ -323,7 +323,7 @@ $messages = $stmt->fetchAll();
                         </div>
                     </div>
 
-                    <div style="margin-top:12px;">
+                    <div>
                         <button class="btn" type="submit">Odeslat</button>
                     </div>
                 </form>
@@ -357,7 +357,7 @@ $messages = $stmt->fetchAll();
                     $rotations = array(-2, -1, 0, 1, 2, -1.5, 1.5);
                     $rot = $rotations[$i % count($rotations)];
                     $newClass = $isJustSent && $i === 0 ? ' is-new' : '';
-                ?>
+                    ?>
                     <div class="note <?php echo h($msg['color']); ?><?php echo $newClass; ?>"
                          style="--rot:<?php echo $rot; ?>; --delay:<?php echo $delay; ?>ms;">
                         <div class="pin"></div>
@@ -371,7 +371,7 @@ $messages = $stmt->fetchAll();
                         <div class="body"><?php
                             $text = h($msg['message']);
                             echo strlen($text) > 180 ? substr($text, 0, 180) . '…' : $text;
-                        ?></div>
+                            ?></div>
 
                         <?php if ($view === 'trash'): ?>
                             <form method="post" style="margin-top:8px;">
